@@ -1,0 +1,280 @@
+{
+  "name": "indentyl",
+  "displayName": "Indentyl — Indent Guides",
+  "description": "Colourised indentation guides that stay correct on every platform. Uses your file's real tab size, diagnoses mixed tabs and spaces, and updates in 0.5ms inside a 12,000-line file. No telemetry.",
+  "version": "1.0.0",
+  "publisher": "levelbrook",
+  "license": "MIT",
+  "author": {
+    "name": "Levelbrook Consulting",
+    "email": "levelbrookteam@gmail.com"
+  },
+  "homepage": "https://github.com/levelbrook/indentyl#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/levelbrook/indentyl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/levelbrook/indentyl/issues"
+  },
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#12161F",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization",
+    "Formatters"
+  ],
+  "keywords": [
+    "indent",
+    "indentation",
+    "indent rainbow",
+    "indent guides",
+    "rainbow indent",
+    "whitespace",
+    "tabs",
+    "spaces",
+    "mixed indentation",
+    "readability",
+    "colorize",
+    "guides",
+    "no telemetry"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": {
+      "supported": true
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "indentyl.toggle",
+        "title": "Toggle Indent Colouring",
+        "category": "Indentyl"
+      },
+      {
+        "command": "indentyl.refresh",
+        "title": "Refresh Decorations",
+        "category": "Indentyl"
+      },
+      {
+        "command": "indentyl.moreTools",
+        "title": "More Levelbrook Tools",
+        "category": "Indentyl"
+      }
+    ],
+    "configuration": {
+      "title": "Indentyl",
+      "properties": {
+        "indentyl.enabled": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Colour indentation."
+        },
+        "indentyl.colors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "rgba(255,255,64,0.07)",
+            "rgba(127,255,127,0.07)",
+            "rgba(255,127,255,0.07)",
+            "rgba(79,236,236,0.07)"
+          ],
+          "scope": "resource",
+          "markdownDescription": "Colours cycled across indent levels. Any CSS colour works: `#rrggbb`, `#rrggbbaa`, `rgb()`, `rgba()`, or a VS Code theme colour id such as `editorIndentGuide.background`."
+        },
+        "indentyl.colorsLight": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "resource",
+          "markdownDescription": "Overrides `#indentyl.colors#` in light themes. Empty means use `#indentyl.colors#`."
+        },
+        "indentyl.colorsDark": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "resource",
+          "markdownDescription": "Overrides `#indentyl.colors#` in dark themes."
+        },
+        "indentyl.colorsHighContrast": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "rgba(255,255,64,0.22)",
+            "rgba(127,255,127,0.22)",
+            "rgba(255,127,255,0.22)",
+            "rgba(79,236,236,0.22)"
+          ],
+          "scope": "resource",
+          "markdownDescription": "Overrides `#indentyl.colors#` in high-contrast themes, where the default translucent fills are too faint to see."
+        },
+        "indentyl.errorColor": {
+          "type": "string",
+          "default": "rgba(228,87,46,0.35)",
+          "scope": "resource",
+          "description": "Colour for an indent that is not a whole number of indent units."
+        },
+        "indentyl.tabmixColor": {
+          "type": "string",
+          "default": "rgba(230,180,40,0.35)",
+          "scope": "resource",
+          "description": "Colour for indentation that mixes tabs and spaces against the file's own indent style."
+        },
+        "indentyl.opacity": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 1,
+          "scope": "resource",
+          "markdownDescription": "Multiplier applied to the alpha of every colour above. `1` uses the colours as written; `0.5` halves their strength."
+        },
+        "indentyl.style": {
+          "type": "string",
+          "enum": [
+            "background",
+            "leftBorder"
+          ],
+          "default": "background",
+          "scope": "resource",
+          "enumDescriptions": [
+            "Fill the whole indent unit.",
+            "Draw a thin vertical rule at the start of each indent unit."
+          ],
+          "description": "How an indent unit is drawn."
+        },
+        "indentyl.detectErrors": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Highlight indentation that does not match the file's indent style: tabs in a space-indented file, spaces before tabs in a tab-indented file, and indents that are not a whole number of indent units."
+        },
+        "indentyl.ignoreErrorLanguages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "markdown",
+            "plaintext",
+            "log",
+            "diff"
+          ],
+          "scope": "resource",
+          "markdownDescription": "Languages where indentation is free-form and error highlighting is noise. `*` disables error highlighting everywhere."
+        },
+        "indentyl.ignoreErrorsInBlockComments": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Do not report indent errors inside block comments and multi-line strings, where alignment is deliberate prose rather than code indentation. Level colours are still drawn there."
+        },
+        "indentyl.ignoreLinePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "resource",
+          "markdownDescription": "Regular expressions. A line matching any of them gets no decoration at all. Example: `[\"^\\\\s*//\"]`."
+        },
+        "indentyl.includedLanguages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "resource",
+          "description": "If non-empty, only these language ids are decorated."
+        },
+        "indentyl.excludedLanguages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "resource",
+          "description": "Language ids never decorated."
+        },
+        "indentyl.colorEmptyLines": {
+          "type": "boolean",
+          "default": false,
+          "scope": "resource",
+          "description": "Carry the surrounding indentation across blank lines."
+        },
+        "indentyl.renderMarginLines": {
+          "type": "number",
+          "default": 200,
+          "minimum": 0,
+          "maximum": 5000,
+          "markdownDescription": "How many lines above and below the visible area are decorated in advance. Larger values make fast scrolling smoother and cost more work per update."
+        },
+        "indentyl.maxDecorationsPerEditor": {
+          "type": "number",
+          "default": 20000,
+          "minimum": 100,
+          "description": "Hard cap on decorations applied to one editor in a single update. A safety valve for pathological files; the visible area is always well inside it."
+        },
+        "indentyl.updateDelayMs": {
+          "type": "number",
+          "default": 60,
+          "minimum": 0,
+          "maximum": 2000,
+          "description": "Debounce for redecorating after an edit, a scroll, or a selection change."
+        },
+        "indentyl.maxIndentColumns": {
+          "type": "number",
+          "default": 256,
+          "minimum": 8,
+          "description": "Stop analysing a line's indentation after this many columns. Protects against machine-generated files with enormous leading whitespace."
+        },
+        "indentyl.maxBlockCommentScanLines": {
+          "type": "number",
+          "default": 50000,
+          "minimum": 0,
+          "description": "Largest file, in lines, for which block-comment regions are tracked. Beyond this, level colours are still drawn but errors inside block comments are no longer suppressed."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run check && npm run bundle",
+    "bundle": "node esbuild.mjs --production",
+    "watch": "node esbuild.mjs --watch",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "compile-tests": "tsc -p tsconfig.test.json",
+    "test": "npm run test:unit && npm run test:integration",
+    "bench": "npm run compile-tests && node out/test/bench.js",
+    "package": "npx @vscode/vsce package --no-dependencies",
+    "test:unit": "npm run bundle && npm run compile-tests && node --test \"out/test/*.test.js\"",
+    "test:integration": "npm run bundle && node test/integration/runTest.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^3.1.0",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.7.2"
+  }
+}
