@@ -63,6 +63,9 @@ indent analysis and decoration building:
 
 437 lines out of 12,001, on every update, whatever the file size. That is the whole design.
 
+These move by roughly ±10% with machine load; a second run of the same suite gave a 0.511 ms mean.
+Call it about half a millisecond.
+
 Reproduce it with `npm run test:integration`; the numbers are printed by the suite, and the two
 assertions behind them (`mean < 25 ms`, `max < 100 ms`) fail the build if they regress.
 
